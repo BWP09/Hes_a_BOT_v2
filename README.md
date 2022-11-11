@@ -1,4 +1,4 @@
-# He's a BOT (2nd re-write)
+# He's a BOT (current)
 
 This is the code for my terrible discord bot.
 
