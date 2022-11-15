@@ -1,4 +1,4 @@
-import discord, atexit, asyncio, os, random
+import discord, atexit, random, asyncio, os, aiohttp
 import colorama as col
 
 import utils, commands
@@ -38,10 +38,16 @@ async def on_message_edit(before, after):
 
     username = str(before.author).split("#")[0]
     channel = str(before.channel)
+    channel_id = int(before.channel.id)
     server = str(before.guild)
 
-    utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE EDIT]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}:\n OLD: {before_message}\n NEW: {after_message}\n")
-    print(f"{col.Fore.RED}[MESSAGE EDIT]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}:\n{col.Fore.LIGHTBLUE_EX} OLD: {before_message}\n NEW: {col.Fore.LIGHTBLUE_EX}\033[4m{after_message}\033[0m")
+    if CONFIG["USE_WEBHOOK"]:
+        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+
+        await utils.webhook_log(CONFIG, f"*[MESSAGE EDIT]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__**\n**>OLD:** {before_message}\n**>NEW:** {after_message}\n")
+
+    utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE EDIT]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}:\n>OLD: {before_message}\n>NEW: {after_message}\n")
+    print(f"{col.Fore.RED}[MESSAGE EDIT]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}:\n{col.Fore.LIGHTBLUE_EX}>OLD: {before_message}\n>NEW: {col.Fore.LIGHTBLUE_EX}\033[4m{after_message}\033[0m")
 
 
 @client.event
@@ -52,7 +58,13 @@ async def on_message_delete(message):
 
     username = str(message.author).split("#")[0]
     channel = str(message.channel)
+    channel_id = int(message.channel.id)
     server = str(message.guild)
+
+    if CONFIG["USE_WEBHOOK"]:
+        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+
+        await utils.webhook_log(CONFIG, f"*[MESSAGE DELETE]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message}")
 
     utils.update_yaml(CONFIG_PATH, "snipe_message", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
 
@@ -75,6 +87,9 @@ async def on_message(message):
     channel_id = int(message.channel.id)
     server = str(message.guild)
 
+    if CONFIG["USE_WEBHOOK"]:
+        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+
     try: server_id = int(message.guild.id)
     except: server_id = 0
 
@@ -88,10 +103,16 @@ async def on_message(message):
         ref_username = str(ref_message.author).split("#")[0]
         ref_message_time = utils.convert_utc_time(str(ref_message.created_at))
 
-        utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"==[{ref_message_time}]: [{server}: {channel}]: {ref_username}: {ref_content}\n^ [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
-        print(f"{col.Fore.YELLOW}=={col.Fore.LIGHTMAGENTA_EX}[{ref_message_time}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{ref_username}: {col.Fore.LIGHTBLUE_EX}{ref_content}\n{col.Fore.YELLOW}^ {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
+        if CONFIG["USE_WEBHOOK"]:
+            await utils.webhook_log(CONFIG, f"*=>* **[{ref_message_time}]: [{server}: {channel}]: __{ref_username}:__** {ref_content}\n^ **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
+
+        utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"=>[{ref_message_time}]: [{server}: {channel}]: {ref_username}: {ref_content}\n^ [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
+        print(f"{col.Fore.YELLOW}=>{col.Fore.LIGHTMAGENTA_EX}[{ref_message_time}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{ref_username}: {col.Fore.LIGHTBLUE_EX}{ref_content}\n{col.Fore.YELLOW}^ {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
 
     else:
+        if CONFIG["USE_WEBHOOK"]:
+            await utils.webhook_log(CONFIG, f"**[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
+
         utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
         print(f"{col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
 
@@ -123,12 +144,13 @@ async def on_message(message):
 
         except Exception as e:
             await utils.send_r(message, message, utils.error_handler(CONFIG, str(e)))
+            return
 
         if command == "blacklist": await commands.blacklist(CONFIG, message, args)
 
         elif command == "test": await commands.test(CONFIG, message)
 
-        elif command == "purge": await commands.purge(CONFIG, message, args, 1)
+        elif command == "purge": await commands.purge(CONFIG, message, int(args), 1)
 
         elif command == "help": await commands.help(CONFIG, message)
 

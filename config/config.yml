@@ -7,11 +7,12 @@ bot:
   megaspam_max: 20
   playing_status: Type "hesa help"
   purge_max: 10
-  version: R2.0.0 D11.10.22
+  version: R2.1.0 D11.14.22
 emoji:
   no_emoji: "\u274C"
   yes_emoji: "\u2705"
 files:
+  blacklist_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/blacklist/
   ffmpeg_exec_path: C:/Program Files (extracted)/ffmpeg-n5.0-latest-win64-gpl-5.0/bin/ffmpeg.exe
   help_files_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/help/
   images_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/images/
@@ -20,6 +21,7 @@ files:
   syntax_files_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/syntax_help/
   vc_download_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/vc_files/yt_download/
   vc_files_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/vc_files/
-  blacklist_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/blacklist/
-snipe_message: '[11-06-2022 00:16:29]: [Pynoly Development: general]: BWP09: hesa
-  megaspam 10; 1'
+snipe_message: '[11-14-2022 20:15:15]: [Pynoly Development: general]: BWP09: test'
+webhook:
+  use_webhook: true
+  webhook_channel: 1041900188974973010

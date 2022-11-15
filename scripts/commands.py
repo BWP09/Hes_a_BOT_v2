@@ -297,7 +297,7 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
         await message.add_reaction(config["NO_EMOJI"])
 
 
-# DESC
+# Sends an invite to the server you are in
 async def invite(config: dict, message):
     try:
         invite_link = await message.channel.create_invite()
@@ -310,14 +310,14 @@ async def invite(config: dict, message):
         await message.add_reaction(config["NO_EMOJI"])
 
 
-# DESC
+# Yes
 async def hitlist(config: dict, message):
     embed_var = discord.Embed(title = "HITLIST", description = "1: Rodrigo", color = config["EMBED_COLOR"])
     await utils.send_e(message, message, embed_var)
 
 
-# DESC
-async def blacklist(config: dict, message, args: str): #hesa blacklist add; response_server: 123456789013456879
+# Adds or removes a server or channel from the specified blacklist
+async def blacklist(config: dict, message, args: str):
     try:
         option = args.split("; ")[0]
         type = args.split("; ")[1].split(": ")[0]

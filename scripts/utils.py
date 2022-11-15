@@ -1,4 +1,4 @@
-import yaml, datetime, discord
+import yaml, datetime, discord, aiohttp
 from dateutil import tz
 import colorama as col
 
@@ -42,6 +42,7 @@ def config(config_path: str, token_path: str):
         token = yaml.safe_load(file)
 
     TOKEN = token["token"]
+    WEBHOOK_LOG = token["webhook_log"]
 
     BOT_ID = config["bot"]["id"]
     ADMIN_NAME = config["bot"]["admin"]["admin_name"]
@@ -65,6 +66,9 @@ def config(config_path: str, token_path: str):
     FFMPEG_EXEC_PATH = config["files"]["ffmpeg_exec_path"]
     BLACKLIST_PATH = config["files"]["blacklist_path"]
 
+    WEBHOOK_CHANNEL = config["webhook"]["webhook_channel"]
+    USE_WEBHOOK = config["webhook"]["use_webhook"]
+
     bl_server = file_read(BLACKLIST_PATH, "server.txt")
     bl_channel = file_read(BLACKLIST_PATH, "channel.txt")
     bl_response_server = file_read(BLACKLIST_PATH, "response_server.txt")
@@ -76,6 +80,8 @@ def config(config_path: str, token_path: str):
 
     config_dict = {
         "TOKEN": TOKEN,
+        "WEBHOOK_LOG": WEBHOOK_LOG,
+
         "BOT_ID": BOT_ID,
         "ADMIN_NAME": ADMIN_NAME,
         "ADMIN_ID": ADMIN_ID,
@@ -97,6 +103,9 @@ def config(config_path: str, token_path: str):
         "SYNTAX_FILES_PATH": SYNTAX_FILES_PATH,
         "FFMPEG_EXEC_PATH": FFMPEG_EXEC_PATH,
         "BLACKLIST_PATH": BLACKLIST_PATH,
+
+        "WEBHOOK_CHANNEL": WEBHOOK_CHANNEL,
+        "USE_WEBHOOK": USE_WEBHOOK,
 
         "bl_server": bl_server,
         "bl_channel": bl_channel,
@@ -192,6 +201,12 @@ def split_nth(string: str, split_char: str, nth_occurrence: int):
     temp = string.split(split_char)
     res = split_char.join(temp[:nth_occurrence]), split_char.join(temp[nth_occurrence:])
     return res
+
+# Logs a message to the logs webhook 
+async def webhook_log(config: dict, webhook_message: str):
+    async with aiohttp.ClientSession() as client_session:
+        webhook = discord.Webhook.from_url(config["WEBHOOK_LOG"], adapter=discord.AsyncWebhookAdapter(client_session))
+        await webhook.send(content=webhook_message)
 
 
 # --== Discord stuff ==-- #
