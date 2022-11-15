@@ -41,83 +41,47 @@ def config(config_path: str, token_path: str):
     with open(f"{token_path}", "r") as file:
         token = yaml.safe_load(file)
 
-    TOKEN = token["token"]
-    WEBHOOK_LOG = token["webhook_log"]
 
-    BOT_ID = config["bot"]["id"]
-    ADMIN_NAME = config["bot"]["admin"]["admin_name"]
-    ADMIN_ID = config["bot"]["admin"]["admin_id"]
-    EMBED_COLOR = config["bot"]["embed_color"]
-    PLAYING_STATUS = config["bot"]["playing_status"]
-    VERSION = config["bot"]["version"]
-    MEGASPAM_MAX = int(config["bot"]["megaspam_max"])
-    PURGE_MAX = int(config["bot"]["purge_max"])
-
-    YES_EMOJI = config["emoji"]["yes_emoji"]
-    NO_EMOJI = config["emoji"]["no_emoji"]
-
-    LOGS_PATH = config["files"]["logs_path"]
-    SNIPE_PATH = config["files"]["snipe_path"]
-    IMAGES_PATH = config["files"]["images_path"]
-    VC_FILES_PATH = config["files"]["vc_files_path"]
-    VC_DOWNLOAD_PATH = config["files"]["vc_download_path"]
-    HELP_FILES_PATH = config["files"]["help_files_path"]
-    SYNTAX_FILES_PATH = config["files"]["syntax_files_path"]
-    FFMPEG_EXEC_PATH = config["files"]["ffmpeg_exec_path"]
     BLACKLIST_PATH = config["files"]["blacklist_path"]
 
-    WEBHOOK_CHANNEL = config["webhook"]["webhook_channel"]
-    USE_WEBHOOK = config["webhook"]["use_webhook"]
+    return {
+        "TOKEN": token["token"],
+        "WEBHOOK_LOG": token["webhook_log"],
 
-    bl_server = file_read(BLACKLIST_PATH, "server.txt")
-    bl_channel = file_read(BLACKLIST_PATH, "channel.txt")
-    bl_response_server = file_read(BLACKLIST_PATH, "response_server.txt")
-    bl_response_channel = file_read(BLACKLIST_PATH, "response_channel.txt")
-    bl_role = file_read(BLACKLIST_PATH, "role.txt")
-    bl_user = file_read(BLACKLIST_PATH, "user.txt")
+        "BOT_ID": config["bot"]["id"],
+        "ADMIN_NAME": config["bot"]["admin"]["admin_name"],
+        "ADMIN_ID": config["bot"]["admin"]["admin_id"],
+        "EMBED_COLOR": config["bot"]["embed_color"],
+        "PLAYING_STATUS": config["bot"]["playing_status"],
+        "VERSION": config["bot"]["version"],
+        "MEGASPAM_MAX": int(config["bot"]["megaspam_max"]),
+        "PURGE_MAX": int(config["bot"]["purge_max"]),
 
-    snipe_message = config["snipe_message"]
+        "YES_EMOJI": config["emoji"]["yes_emoji"],
+        "NO_EMOJI": config["emoji"]["no_emoji"],
 
-    config_dict = {
-        "TOKEN": TOKEN,
-        "WEBHOOK_LOG": WEBHOOK_LOG,
-
-        "BOT_ID": BOT_ID,
-        "ADMIN_NAME": ADMIN_NAME,
-        "ADMIN_ID": ADMIN_ID,
-        "EMBED_COLOR": EMBED_COLOR,
-        "PLAYING_STATUS": PLAYING_STATUS,
-        "VERSION": VERSION,
-        "MEGASPAM_MAX": MEGASPAM_MAX,
-        "PURGE_MAX": PURGE_MAX,
-
-        "YES_EMOJI": YES_EMOJI,
-        "NO_EMOJI": NO_EMOJI,
-
-        "LOGS_PATH": LOGS_PATH,
-        "SNIPE_PATH": SNIPE_PATH,
-        "IMAGES_PATH": IMAGES_PATH,
-        "VC_FILES_PATH": VC_FILES_PATH,
-        "VC_DOWNLOAD_PATH": VC_DOWNLOAD_PATH,
-        "HELP_FILES_PATH": HELP_FILES_PATH,
-        "SYNTAX_FILES_PATH": SYNTAX_FILES_PATH,
-        "FFMPEG_EXEC_PATH": FFMPEG_EXEC_PATH,
+        "LOGS_PATH": config["files"]["logs_path"],
+        "SNIPE_PATH": config["files"]["snipe_path"],
+        "IMAGES_PATH": config["files"]["images_path"],
+        "VC_FILES_PATH": config["files"]["vc_files_path"],
+        "VC_DOWNLOAD_PATH": config["files"]["vc_download_path"],
+        "HELP_FILES_PATH": config["files"]["help_files_path"],
+        "SYNTAX_FILES_PATH": config["files"]["syntax_files_path"],
+        "FFMPEG_EXEC_PATH": config["files"]["ffmpeg_exec_path"],
         "BLACKLIST_PATH": BLACKLIST_PATH,
 
-        "WEBHOOK_CHANNEL": WEBHOOK_CHANNEL,
-        "USE_WEBHOOK": USE_WEBHOOK,
+        "WEBHOOK_CHANNEL": config["webhook"]["webhook_channel"],
+        "USE_WEBHOOK": config["webhook"]["use_webhook"],
 
-        "bl_server": bl_server,
-        "bl_channel": bl_channel,
-        "bl_response_server": bl_response_server,
-        "bl_response_channel": bl_response_channel,
-        "bl_role": bl_role,
-        "bl_user": bl_user,
+        "bl_server": file_read(BLACKLIST_PATH, "server.txt"),
+        "bl_channel": file_read(BLACKLIST_PATH, "channel.txt"),
+        "bl_response_server": file_read(BLACKLIST_PATH, "response_server.txt"),
+        "bl_response_channel": file_read(BLACKLIST_PATH, "response_channel.txt"),
+        "bl_role": file_read(BLACKLIST_PATH, "role.txt"),
+        "bl_user": file_read(BLACKLIST_PATH, "user.txt"),
 
-        "snipe_message": snipe_message
+        "snipe_message": config["snipe_message"]
     }
-
-    return config_dict
 
 # returns a datetime object with the given format
 def get_date_time(type: int):
