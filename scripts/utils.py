@@ -150,8 +150,6 @@ def error_handler(config: dict, error: str):
 
 # runs when the main bot loop is closed
 def exit_handler(config: dict):
-    import colorama as col
-
     print(f"{col.Fore.YELLOW}>[Exit Handler]: Closing bot.")
     log(config["LOGS_PATH"], f"LOG-{get_date_time(1)}", f">[Exit Handler]: Closing bot.")
     print(f"{col.Style.RESET_ALL}Closed")
@@ -163,14 +161,13 @@ def syntax_embed(config: dict, command):
 # splits a string at the nth occurrence of a char
 def split_nth(string: str, split_char: str, nth_occurrence: int):
     temp = string.split(split_char)
-    res = split_char.join(temp[:nth_occurrence]), split_char.join(temp[nth_occurrence:])
-    return res
+    return split_char.join(temp[:nth_occurrence]), split_char.join(temp[nth_occurrence:])
 
 # Logs a message to the logs webhook 
 async def webhook_log(config: dict, webhook_message: str):
     async with aiohttp.ClientSession() as client_session:
-        webhook = discord.Webhook.from_url(config["WEBHOOK_LOG"], adapter=discord.AsyncWebhookAdapter(client_session))
-        await webhook.send(content=webhook_message)
+        webhook = discord.Webhook.from_url(config["WEBHOOK_LOG"], adapter = discord.AsyncWebhookAdapter(client_session))
+        await webhook.send(content = webhook_message)
 
 
 # --== Discord stuff ==-- #
