@@ -3,14 +3,6 @@ import colorama as col
 
 import utils
 
-"""
-TODO:
-
-add stop cmd
-add blacklist cmd + functionality
-
-"""
-
 
 # A test command
 async def test(config: dict, message):
@@ -43,7 +35,7 @@ async def purge(config: dict, message, amount: int, case: int):
 
             async for delete_message in message.channel.history(limit = amount + 1):
                 await delete_message.delete()
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
 
             if case == 1:
                 await utils.send(message, f"Purge Complete :smiling_imp:\nDeleted {amount} messages")
@@ -55,7 +47,10 @@ async def purge(config: dict, message, amount: int, case: int):
 
 # The help command
 async def help(config: dict, message):
-    embed_var = discord.Embed(title = "Help Command", description = utils.file_read(config["HELP_FILES_PATH"], "help_file.txt"), color = config["EMBED_COLOR"])
+    original_desc_text = utils.file_read(config["HELP_FILES_PATH"], "help_file.txt")
+    desc_text = utils.var_parser(original_desc_text, ["VERSION", "ADMIN_NAME", "GITHUB_LINK"], [config["VERSION"], config["ADMIN_NAME"], config["GITHUB_LINK"]])
+
+    embed_var = discord.Embed(title = "Help Command", description = desc_text, color = config["EMBED_COLOR"])
 
     await utils.send_e(message, message, embed_var)
     await message.add_reaction(config["YES_EMOJI"])

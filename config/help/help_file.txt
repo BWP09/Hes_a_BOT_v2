@@ -31,7 +31,10 @@ Key:
  - <> = required args
  - [] = insert value
 
-vR2.0.0 D11.10.22
+v{{VERSION}}
 
-By BWP09#5091
-Github: https://github.com/BWP09/Hes_a_BOT_v2
+By {{ADMIN_NAME}}
+GitHub: {{GITHUB_LINK}}
+
+**Having issues with Hesa?**
+Open an issue on GitHub: {{GITHUB_LINK}}/issues

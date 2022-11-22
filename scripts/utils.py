@@ -48,6 +48,8 @@ def config(config_path: str, token_path: str):
         "TOKEN": token["token"],
         "WEBHOOK_LOG": token["webhook_log"],
 
+        "GITHUB_LINK": config["bot"]["github"],
+
         "BOT_ID": config["bot"]["id"],
         "ADMIN_NAME": config["bot"]["admin"]["admin_name"],
         "ADMIN_ID": config["bot"]["admin"]["admin_id"],
@@ -148,6 +150,11 @@ def error_handler(config: dict, error: str):
 
     return f"[Error Handler]: **{text}**\n(try `hesa help`)\n```{error}```"
 
+# Invalid command handler
+async def invalid_command(config: dict, message, command: str):
+    await send_r(message, message, f"[Error Handler]: \"**{command}**\" is not a valid command\n(try `hesa help`)")
+    await message.add_reaction(config["NO_EMOJI"])
+
 # runs when the main bot loop is closed
 def exit_handler(config: dict):
     print(f"{col.Fore.YELLOW}>[Exit Handler]: Closing bot.")
@@ -163,11 +170,18 @@ def split_nth(string: str, split_char: str, nth_occurrence: int):
     temp = string.split(split_char)
     return split_char.join(temp[:nth_occurrence]), split_char.join(temp[nth_occurrence:])
 
-# Logs a message to the logs webhook 
+# Logs a message to the logs webhook
 async def webhook_log(config: dict, webhook_message: str):
     async with aiohttp.ClientSession() as client_session:
         webhook = discord.Webhook.from_url(config["WEBHOOK_LOG"], adapter = discord.AsyncWebhookAdapter(client_session))
         await webhook.send(content = webhook_message)
+
+# Takes a string as input and replaces all of the var indicators with the provided values
+def var_parser(input_string: str, var_names: list, replace_vars: list):
+    for var, replace_var in zip(var_names, replace_vars):
+        input_string = input_string.replace("{{" + var + "}}", replace_var)
+
+    return input_string
 
 
 # --== Discord stuff ==-- #

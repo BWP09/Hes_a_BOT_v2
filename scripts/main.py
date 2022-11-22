@@ -3,6 +3,12 @@ import colorama as col
 
 import utils, commands
 
+"""
+TODO:
+Move to Nextcord
+
+"""
+
 #class Object: pass
 #a = Object()
 #a.x = 1
@@ -180,6 +186,8 @@ async def on_message(message):
         elif command == "leave": await commands.leave(CONFIG, message)
 
         elif command == "vc": await commands.vc(CONFIG, message, args)
+
+        else: await utils.invalid_command(CONFIG, message, command)
 
 
     elif str(CONFIG["bl_response_server"]).count(str(server_id)) > 0: return
