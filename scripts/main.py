@@ -14,12 +14,10 @@ Move to Nextcord
 #a.x = 1
 #print(a.x) # prints 1
 
-CONFIG_PATH = "C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/config.yml"
-TOKEN_PATH = "C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/token.yml"
 
 def update_config():
     global CONFIG
-    CONFIG = utils.config(CONFIG_PATH, TOKEN_PATH)
+    CONFIG = utils.config("C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/config.yml")
 
 update_config()
 col.init()
@@ -72,7 +70,7 @@ async def on_message_delete(message):
 
         await utils.webhook_log(CONFIG, f"*[MESSAGE DELETE]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message}")
 
-    utils.update_yaml(CONFIG_PATH, "snipe_message", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
+    utils.update_yaml(CONFIG["SNIPE_MESSAGE_PATH"], "snipe_message", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
 
     utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE DELETE]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
     utils.log(CONFIG["SNIPE_PATH"], f"SNIPE-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")

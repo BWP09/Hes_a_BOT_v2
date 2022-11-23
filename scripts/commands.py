@@ -232,14 +232,12 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
 
             else: raise Exception("Not connected to voice channel")
 
-
         elif option == "stop":
             if message.guild.voice_client:
                 vc = message.guild.voice_client
                 vc.stop()
 
             else: raise Exception("Not connected to voice channel")
-
 
         elif option == "pause":
             if message.guild.voice_client:
@@ -250,7 +248,6 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
                 else: raise Exception("Audio not playing")
             else: raise Exception("Not connected to voice channel")
 
-
         elif option == "resume":
             if message.guild.voice_client:
                 vc = message.guild.voice_client
@@ -259,7 +256,6 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
 
                 else: raise Exception("Audio not paused")
             else: raise Exception("Not connected to voice channel")
-
 
         elif option == "list":
             names = "Files:\n"

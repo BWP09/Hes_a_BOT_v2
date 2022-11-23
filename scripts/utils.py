@@ -34,12 +34,18 @@ def remove_yaml(yaml_file_name: str, key: str, value):
         yaml.dump(data, f)
 
 # returns a dictionary containing config values from the config files
-def config(config_path: str, token_path: str):
+def config(config_path: str):
     with open(f"{config_path}", "r") as file:
         config = yaml.safe_load(file)
 
-    with open(f"{token_path}", "r") as file:
+    TOKEN_PATH = config["files"]["token_path_yml"]
+    SNIPE_MESSAGE_PATH = config["files"]["snipe_path_yml"]
+
+    with open(f"{TOKEN_PATH}", "r") as file:
         token = yaml.safe_load(file)
+
+    with open(f"{SNIPE_MESSAGE_PATH}", "r") as file:
+        snipe_message_yml = yaml.safe_load(file)
 
 
     BLACKLIST_PATH = config["files"]["blacklist_path"]
@@ -62,6 +68,7 @@ def config(config_path: str, token_path: str):
         "YES_EMOJI": config["emoji"]["yes_emoji"],
         "NO_EMOJI": config["emoji"]["no_emoji"],
 
+        "SNIPE_MESSAGE_PATH": SNIPE_MESSAGE_PATH,
         "LOGS_PATH": config["files"]["logs_path"],
         "SNIPE_PATH": config["files"]["snipe_path"],
         "IMAGES_PATH": config["files"]["images_path"],
@@ -82,7 +89,7 @@ def config(config_path: str, token_path: str):
         "bl_role": file_read(BLACKLIST_PATH, "role.txt"),
         "bl_user": file_read(BLACKLIST_PATH, "user.txt"),
 
-        "snipe_message": config["snipe_message"]
+        "snipe_message": snipe_message_yml["snipe_message"]
     }
 
 # returns a datetime object with the given format

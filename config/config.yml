@@ -3,12 +3,12 @@ bot:
     admin_id: 778024940158844938
     admin_name: BWP09#5091
   embed_color: 40863
+  github: https://github.com/BWP09/Hes_a_BOT_v2
   id: 947343189352796220
   megaspam_max: 20
   playing_status: Type "hesa help"
   purge_max: 10
-  version: R2.2.0 D11.21.22
-  github: https://github.com/BWP09/Hes_a_BOT_v2
+  version: R2.2.1 D11.21.22
 emoji:
   no_emoji: "\u274C"
   yes_emoji: "\u2705"
@@ -22,7 +22,8 @@ files:
   syntax_files_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/syntax_help/
   vc_download_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/vc_files/yt_download/
   vc_files_path: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/vc_files/
-snipe_message: '[11-21-2022 15:43:13]: [Pynoly Development: general]: BWP09: P!<2>'
+  token_path_yml: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/token.yml
+  snipe_path_yml: C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/snipe_message.yml
 webhook:
   use_webhook: true
   webhook_channel: 1041900188974973010
