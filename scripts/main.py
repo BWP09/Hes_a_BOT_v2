@@ -1,36 +1,27 @@
-import discord, atexit, random, asyncio, os, aiohttp
+import nextcord, atexit, random, asyncio, os, aiohttp
 import colorama as col
 
 import utils, commands
-
-"""
-TODO:
-Move to Nextcord
-
-"""
-
-#class Object: pass
-#a = Object()
-#a.x = 1
-#print(a.x) # prints 1
 
 
 def update_config():
     global CONFIG
     CONFIG = utils.config("C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/config.yml")
 
+
 update_config()
 col.init()
 atexit.register(utils.exit_handler, CONFIG)
-client = discord.Client()
+intents = nextcord.Intents.all()
+client = nextcord.Client(intents=intents)
 
 
 @client.event
 async def on_ready():
     print(f"{col.Style.RESET_ALL}Logged in as:")
     print(f"{client.user} (v{ CONFIG['VERSION'] })")
-    await client.change_presence(status = discord.Status.online)
-    await client.change_presence(activity = discord.Game(CONFIG['PLAYING_STATUS']))
+    await client.change_presence(status = nextcord.Status.online)
+    await client.change_presence(activity = nextcord.Game(CONFIG['PLAYING_STATUS']))
 
 
 @client.event
@@ -48,7 +39,7 @@ async def on_message_edit(before, after):
     if CONFIG["USE_WEBHOOK"]:
         if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
 
-        await utils.webhook_log(CONFIG, f"*[MESSAGE EDIT]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__**\n**>OLD:** {before_message}\n**>NEW:** {after_message}\n")
+        utils.webhook_log(CONFIG, f"*[MESSAGE EDIT]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__**\n**>OLD:** {before_message}\n**>NEW:** {after_message}\n")
 
     utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE EDIT]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}:\n>OLD: {before_message}\n>NEW: {after_message}\n")
     print(f"{col.Fore.RED}[MESSAGE EDIT]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}:\n{col.Fore.LIGHTBLUE_EX}>OLD: {before_message}\n>NEW: {col.Fore.LIGHTBLUE_EX}\033[4m{after_message}\033[0m")
@@ -68,7 +59,7 @@ async def on_message_delete(message):
     if CONFIG["USE_WEBHOOK"]:
         if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
 
-        await utils.webhook_log(CONFIG, f"*[MESSAGE DELETE]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message}")
+        utils.webhook_log(CONFIG, f"*[MESSAGE DELETE]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message}")
 
     utils.update_yaml(CONFIG["SNIPE_MESSAGE_PATH"], "snipe_message", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
 
@@ -108,14 +99,14 @@ async def on_message(message):
         ref_message_time = utils.convert_utc_time(str(ref_message.created_at))
 
         if CONFIG["USE_WEBHOOK"]:
-            await utils.webhook_log(CONFIG, f"*=>* **[{ref_message_time}]: [{server}: {channel}]: __{ref_username}:__** {ref_content}\n^ **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
+            utils.webhook_log(CONFIG, f"*=>* **[{ref_message_time}]: [{server}: {channel}]: __{ref_username}:__** {ref_content}\n^ **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
 
         utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"=>[{ref_message_time}]: [{server}: {channel}]: {ref_username}: {ref_content}\n^ [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
         print(f"{col.Fore.YELLOW}=>{col.Fore.LIGHTMAGENTA_EX}[{ref_message_time}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{ref_username}: {col.Fore.LIGHTBLUE_EX}{ref_content}\n{col.Fore.YELLOW}^ {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
 
     else:
         if CONFIG["USE_WEBHOOK"]:
-            await utils.webhook_log(CONFIG, f"**[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
+            utils.webhook_log(CONFIG, f"**[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message_default}")
 
         utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
         print(f"{col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
@@ -195,10 +186,10 @@ async def on_message(message):
     #--== Responses ==--#
 
     elif user_message.count("hassan") > 0:
-        await message.channel.send("kidnapped your family + L + ratio + bozo", file = discord.File(CONFIG["IMAGES_PATH"] + "hassan_bozo.jpg"))
+        await message.channel.send("kidnapped your family + L + ratio + bozo", file = nextcord.File(CONFIG["IMAGES_PATH"] + "hassan_bozo.jpg"))
 
     elif user_message.count("jack") > 0:
-        await message.channel.send("did someone say jack....\n", file = discord.File(CONFIG["IMAGES_PATH"] + "jackhigh.png"), reference = message)
+        await message.channel.send("did someone say jack....\n", file = nextcord.File(CONFIG["IMAGES_PATH"] + "jackhigh.png"), reference = message)
 
 
     elif user_message == "ok" or user_message == "okay":

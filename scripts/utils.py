@@ -178,10 +178,9 @@ def split_nth(string: str, split_char: str, nth_occurrence: int):
     return split_char.join(temp[:nth_occurrence]), split_char.join(temp[nth_occurrence:])
 
 # Logs a message to the logs webhook
-async def webhook_log(config: dict, webhook_message: str):
-    async with aiohttp.ClientSession() as client_session:
-        webhook = discord.Webhook.from_url(config["WEBHOOK_LOG"], adapter = discord.AsyncWebhookAdapter(client_session))
-        await webhook.send(content = webhook_message)
+def webhook_log(config: dict, webhook_message: str):
+    webhook = discord.SyncWebhook.from_url(config["WEBHOOK_LOG"])
+    webhook.send(content = webhook_message)
 
 # Takes a string as input and replaces all of the var indicators with the provided values
 def var_parser(input_string: str, var_names: list, replace_vars: list):
