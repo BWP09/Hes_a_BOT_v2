@@ -8,7 +8,7 @@ bot:
   megaspam_max: 20
   playing_status: Type "hesa help"
   purge_max: 10
-  version: R2.3.0 D11.24.22
+  version: R2.4.0 D1.2.23
 emoji:
   no_emoji: "\u274C"
   yes_emoji: "\u2705"
