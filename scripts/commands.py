@@ -341,13 +341,18 @@ async def blacklist(config: dict, message, args: str):
 
 # Executes python code from discord message!
 async def py(config: dict, message: nextcord.Message, args: str):
-    if message.author.id != config["ADMIN_ID"]: return
+    try:
+        if message.author.id != config["ADMIN_ID"]: return
     
-    del config["TOKEN"]
-    del config["WEBHOOK_URL"]
+        del config["TOKEN"]
+        del config["WEBHOOK_URL"]
     
-    scope = {"message": message, "config": config}
+        scope = {"message": message, "config": config}
     
-    exec(args, scope)
+        exec(args, scope)
     
-    await scope["run"]()
+        await scope["run"]()
+    
+    except Exception as e:
+        await utils.send_r(message, message, utils.error_handler(config, str(e)))
+        await message.add_reaction(config["NO_EMOJI"])
