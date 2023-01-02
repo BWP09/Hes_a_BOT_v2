@@ -38,11 +38,11 @@ def config(config_path: str):
     with open(f"{config_path}", "r") as file:
         config = yaml.safe_load(file)
 
-    TOKEN_PATH = config["files"]["token_path_yml"]
+    SECRETS_PATH = config["files"]["secrets_path_yml"]
     SNIPE_MESSAGE_PATH = config["files"]["snipe_path_yml"]
 
-    with open(f"{TOKEN_PATH}", "r") as file:
-        token = yaml.safe_load(file)
+    with open(f"{SECRETS_PATH}", "r") as file:
+        secrets = yaml.safe_load(file)
 
     with open(f"{SNIPE_MESSAGE_PATH}", "r") as file:
         snipe_message_yml = yaml.safe_load(file)
@@ -51,8 +51,8 @@ def config(config_path: str):
     BLACKLIST_PATH = config["files"]["blacklist_path"]
 
     return {
-        "TOKEN": token["token"],
-        "WEBHOOK_LOG": token["webhook_log"],
+        "TOKEN": secrets["token"],
+        "WEBHOOK_URL": secrets["webhook_url"],
 
         "GITHUB_LINK": config["bot"]["github"],
 
@@ -179,7 +179,7 @@ def split_nth(string: str, split_char: str, nth_occurrence: int):
 
 # Logs a message to the logs webhook
 def webhook_log(config: dict, webhook_message: str):
-    webhook = discord.SyncWebhook.from_url(config["WEBHOOK_LOG"])
+    webhook = discord.SyncWebhook.from_url(config["WEBHOOK_URL"])
     webhook.send(content = webhook_message)
 
 # Takes a string as input and replaces all of the var indicators with the provided values

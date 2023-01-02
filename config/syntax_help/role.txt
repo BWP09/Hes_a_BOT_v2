@@ -1,8 +1,8 @@
-This command can give and remove roles from yourself.
+This command can give and remove roles from a user in the specified server.
 This can only give roles below and at what highest level role Hesa has.
 
 *Usage:*
-`hesa role <add, remove>; [role name]`
+`hesa role <add, remove>; [server id]; [user id]; [role id]`
 
 *Examples:*
-`hesa role add; Admin` will give you the "Admin" role
+`hesa role add; 123; 456; 789` will give the user with an ID of 456 the role with an ID of 789, in the server with an ID of 123

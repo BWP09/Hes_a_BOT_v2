@@ -1,4 +1,4 @@
-import asyncio, discord, os
+import asyncio, nextcord, os
 import colorama as col
 
 import utils
@@ -15,9 +15,9 @@ async def delete(config: dict, message, message_id: int):
     delete_message = await message.channel.fetch_message(message_id)
 
     await message.add_reaction(config["YES_EMOJI"])
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.25)
     await delete_message.delete()
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.5)
     await message.delete()
 
 
@@ -50,7 +50,7 @@ async def help(config: dict, message):
     original_desc_text = utils.file_read(config["HELP_FILES_PATH"], "help_file.txt")
     desc_text = utils.var_parser(original_desc_text, ["VERSION", "ADMIN_NAME", "GITHUB_LINK"], [config["VERSION"], config["ADMIN_NAME"], config["GITHUB_LINK"]])
 
-    embed_var = discord.Embed(title = "Help Command", description = desc_text, color = config["EMBED_COLOR"])
+    embed_var = nextcord.Embed(title = "Help Command", description = desc_text, color = config["EMBED_COLOR"])
 
     await utils.send_e(message, message, embed_var)
     await message.add_reaction(config["YES_EMOJI"])
@@ -58,7 +58,7 @@ async def help(config: dict, message):
 
 # Secrete help command for stuff like role commands
 async def help2(config: dict, message):
-    embed_var = discord.Embed(title = "*Help* Command", description = utils.file_read(config["HELP_FILES_PATH"], "help_file_secrete.txt"), color = config["EMBED_COLOR"])
+    embed_var = nextcord.Embed(title = "*Help* Command", description = utils.file_read(config["HELP_FILES_PATH"], "help_file_secrete.txt"), color = config["EMBED_COLOR"])
 
     await utils.send_e(message, message, embed_var)
     await message.add_reaction(config["YES_EMOJI"])
@@ -67,7 +67,7 @@ async def help2(config: dict, message):
 # Provides in depth help for a command
 async def syntax_help(config: dict, message, command: str):
     try:
-        embed_var = discord.Embed(title = f"Syntax Help: {command}", description = utils.file_read(config["SYNTAX_FILES_PATH"], f"{command}.txt"), color = config["EMBED_COLOR"])
+        embed_var = nextcord.Embed(title = f"Syntax Help: {command}", description = utils.file_read(config["SYNTAX_FILES_PATH"], f"{command}.txt"), color = config["EMBED_COLOR"])
 
         await utils.send_e(message, message, embed_var)
         await message.add_reaction(config["YES_EMOJI"])
@@ -103,7 +103,7 @@ async def id(config: dict, message, args: str):
 
 
 # Changes the status of the bot
-async def status(config: dict, client, message, args: str):
+async def status(config: dict, client: nextcord.Client, message, args: str):
     try:
         status_type = args.split("; ")[0]
         status_message = args.split("; ")[1]
@@ -111,7 +111,7 @@ async def status(config: dict, client, message, args: str):
         if status_type not in ["online", "dnd", "idle", "offline", "invisible"]:
             raise Exception("invalid status")
 
-        await client.change_presence(activity = discord.Game(str(status_message)), status = discord.Status[status_type])
+        await client.change_presence(activity = nextcord.Game(str(status_message)), status = nextcord.Status[status_type])
         await message.add_reaction(config["YES_EMOJI"])
 
     except Exception as e:
@@ -164,24 +164,24 @@ async def megaspam(config: dict, message, args: str):
 
 
 # Change your roles (hehe)
-async def role(config: dict, message, args: str):
+async def role(config: dict, client: nextcord.Client, message: nextcord.Message, args: str):
     try:
         action = args.split("; ")[0]
-        role_name = args.split("; ")[1]
+        server_id = args.split("; ")[1]
+        user_id = args.split("; ")[2]
+        role_id = args.split("; ")[3]
+        
+        server = await client.fetch_guild(int(server_id))
+        user = await server.fetch_member(int(user_id))
+        role = server.get_role(int(role_id))
 
         if action == "add":
-            member = message.author
-            role = discord.utils.get(member.guild.roles, name = role_name)
-
-            await member.add_roles(role)
-            await message.add_reaction(config["YES_EMOJI"])
+            await user.add_roles(role) # type: ignore
 
         elif action == "remove":
-            member = message.author
-            role = discord.utils.get(member.guild.roles, name = role_name)
-
-            await member.remove_roles(role)
-            await message.add_reaction(config["YES_EMOJI"])
+            await user.remove_roles(role) # type: ignore
+        
+        await message.add_reaction(config["YES_EMOJI"])
 
     except Exception as e:
         await utils.send_r(message, message, utils.error_handler(config, str(e)))
@@ -228,7 +228,7 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
         if option == "play":
             if message.guild.voice_client:
                 vc = message.guild.voice_client
-                vc.play(discord.FFmpegPCMAudio(executable = config["FFMPEG_EXEC_PATH"], source = config["VC_FILES_PATH"] + name))
+                vc.play(nextcord.FFmpegPCMAudio(executable = config["FFMPEG_EXEC_PATH"], source = config["VC_FILES_PATH"] + name))
 
             else: raise Exception("Not connected to voice channel")
 
@@ -303,7 +303,7 @@ async def invite(config: dict, message):
 
 # Yes
 async def hitlist(config: dict, message):
-    embed_var = discord.Embed(title = "HITLIST", description = "1: Rodrigo", color = config["EMBED_COLOR"])
+    embed_var = nextcord.Embed(title = "HITLIST", description = "1: Rodrigo", color = config["EMBED_COLOR"])
     await utils.send_e(message, message, embed_var)
 
 
@@ -337,3 +337,17 @@ async def blacklist(config: dict, message, args: str):
     except Exception as e:
         await utils.send_r(message, message, utils.error_handler(config, str(e)))
         await message.add_reaction(config["NO_EMOJI"])
+
+
+# Executes python code from discord message!
+async def py(config: dict, message: nextcord.Message, args: str):
+    if message.author.id != config["ADMIN_ID"]: return
+    
+    del config["TOKEN"]
+    del config["WEBHOOK_URL"]
+    
+    scope = {"message": message, "config": config}
+    
+    exec(args, scope)
+    
+    await scope["run"]()

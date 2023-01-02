@@ -13,7 +13,7 @@ update_config()
 col.init()
 atexit.register(utils.exit_handler, CONFIG)
 intents = nextcord.Intents.all()
-client = nextcord.Client(intents=intents)
+client = nextcord.Client(intents = intents)
 
 
 @client.event
@@ -124,8 +124,8 @@ async def on_message(message):
     #--== Commands ==--#
 
     if user_message.startswith("!") and bl != 1: # !p<AMOUNT> !d<MESSAGE_ID>
-        command = user_message.removeprefix("!").split("<")[0]
-        args = int(user_message.removeprefix(f"!{command}<").removesuffix(">"))
+        command = user_message[1]
+        args = int(user_message.removeprefix(f"!{command}"))
 
         if command == "p": await commands.purge(CONFIG, message, args, 0)
 
@@ -161,7 +161,7 @@ async def on_message(message):
 
         elif command == "megaspam": await commands.megaspam(CONFIG, message, args)
 
-        elif command == "role": await commands.role(CONFIG, message, args)
+        elif command == "role": await commands.role(CONFIG, client, message, args)
 
         elif command == "snipe": await commands.snipe(CONFIG, message)
 
@@ -175,6 +175,9 @@ async def on_message(message):
         elif command == "leave": await commands.leave(CONFIG, message)
 
         elif command == "vc": await commands.vc(CONFIG, message, args)
+        
+        
+        elif command == "run": await commands.py(CONFIG, message, args)
 
         else: await utils.invalid_command(CONFIG, message, command)
 
