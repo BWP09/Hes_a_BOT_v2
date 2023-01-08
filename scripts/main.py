@@ -6,7 +6,7 @@ import utils, commands
 
 def update_config():
     global CONFIG
-    CONFIG = utils.config("C:/Users/BWP09/Desktop/Misc/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/config.yml")
+    CONFIG = utils.config("C:/Users/BWP09/Desktop/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/config.yml")
 
 
 update_config()

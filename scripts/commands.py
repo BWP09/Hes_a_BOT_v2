@@ -309,6 +309,8 @@ async def hitlist(config: dict, message):
 
 # Adds or removes a server or channel from the specified blacklist
 async def blacklist(config: dict, message, args: str):
+    if message.author.id != config["ADMIN_ID"]: return
+    
     try:
         option = args.split("; ")[0]
         type = args.split("; ")[1].split(": ")[0]

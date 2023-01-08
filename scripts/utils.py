@@ -202,4 +202,4 @@ async def send_r(message, ref, text: str):
 
 # sends an embed message to the channel of the provided message object
 async def send_e(message, ref, emb):
-     await message.channel.send(embed = emb, reference = ref)
+    await message.channel.send(embed = emb, reference = ref)
