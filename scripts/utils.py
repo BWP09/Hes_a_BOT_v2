@@ -35,16 +35,16 @@ def remove_yaml(yaml_file_name: str, key: str, value):
 
 # returns a dictionary containing config values from the config files
 def config(config_path: str):
-    with open(f"{config_path}", "r") as file:
+    with open(config_path, "r") as file:
         config = yaml.safe_load(file)
 
     SECRETS_PATH = config["files"]["secrets_path_yml"]
     SNIPE_MESSAGE_PATH = config["files"]["snipe_path_yml"]
 
-    with open(f"{SECRETS_PATH}", "r") as file:
+    with open(SECRETS_PATH, "r") as file:
         secrets = yaml.safe_load(file)
 
-    with open(f"{SNIPE_MESSAGE_PATH}", "r") as file:
+    with open(SNIPE_MESSAGE_PATH, "r") as file:
         snipe_message_yml = yaml.safe_load(file)
 
 
@@ -117,12 +117,12 @@ def log(logs_path: str, file_name: str, text: str):
     with open(f"{logs_path}{file_name}.log", "a", encoding = "utf-8") as file:
         file.write(f"{text}\n")
 
-# appends given text to a file of the given name
+# appends text to a file of the given name
 def file_append(file_path: str, file_name: str, text: str):
     with open(file_path + file_name, "a", encoding = "utf-8") as file:
         file.write(text)
 
-# writes given text to given file, deletes what was previously there
+# writes text to given file, deletes what was previously there
 def file_write(file_path: str, file_name: str, text: str):
     with open(file_path + file_name, "r+", encoding = "utf-8") as file:
         file.seek(0)
