@@ -1,4 +1,5 @@
-import nextcord, atexit, random, asyncio, os, aiohttp
+import nextcord, atexit, random, pyntfy
+from nextcord.ext import tasks
 import colorama as col
 
 import utils, commands
@@ -25,6 +26,43 @@ async def on_ready():
 
 
 @client.event
+async def on_presence_update(before: nextcord.Member, after: nextcord.Member):
+    if after.guild.id != 974019677116309544: return
+    
+    update_config()
+
+    print()
+
+    print(f"""{col.Style.RESET_ALL}[{utils.get_date_time(0)}]: {after.name}:
+  old:
+   mobile: {before.mobile_status}
+   desktop: {before.desktop_status}
+  new:
+   mobile: {after.mobile_status}
+   desktop: {after.desktop_status}""")
+
+    for activity in after.activities:
+        try: print(f"{activity}: {activity.title} by {activity.artist}")
+        except: pass
+        
+        try: print(f"{activity}: {activity.name}")
+        except: pass
+    
+    print()
+
+"""
+@tasks.loop(seconds = 1)
+async def presence_update_helper():
+    print("test")
+
+
+@client.event
+async def on_typing(channel, user, when):
+    print(f"{user} is typing in {channel}")
+"""
+
+
+@client.event
 async def on_message_edit(before, after):
     update_config()
 
@@ -41,8 +79,8 @@ async def on_message_edit(before, after):
 
         utils.webhook_log(CONFIG, f"*[MESSAGE EDIT]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__**\n**>OLD:** {before_message}\n**>NEW:** {after_message}\n")
 
-    utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE EDIT]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}:\n>OLD: {before_message}\n>NEW: {after_message}\n")
-    print(f"{col.Fore.RED}[MESSAGE EDIT]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}:\n{col.Fore.LIGHTBLUE_EX}>OLD: {before_message}\n>NEW: {col.Fore.LIGHTBLUE_EX}\033[4m{after_message}\033[0m")
+    utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE EDIT]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}:\n OLD: {before_message}\n NEW: {after_message}\n")
+    print(f"{col.Fore.LIGHTRED_EX}[MESSAGE EDIT]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}:\n{col.Fore.LIGHTBLUE_EX} OLD: {before_message}\n NEW: {col.Fore.LIGHTBLUE_EX}\033[4m{after_message}\033[0m")
 
 
 @client.event
@@ -65,7 +103,7 @@ async def on_message_delete(message):
 
     utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[MESSAGE DELETE]: [{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
     utils.log(CONFIG["SNIPE_PATH"], f"SNIPE-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message}")
-    print(f"{col.Fore.RED}[MESSAGE DELETE]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}\033[4m{user_message}\033[0m")
+    print(f"{col.Fore.LIGHTRED_EX}[MESSAGE DELETE]: {col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}\033[4m{user_message}\033[0m")
 
 
 @client.event
@@ -110,7 +148,7 @@ async def on_message(message):
 
         utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
         print(f"{col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
-
+        
 
     if author_id == CONFIG["BOT_ID"]: return
 
@@ -234,4 +272,5 @@ async def on_message(message):
             case 1: await utils.send_r(message, message, "lol")
 
 
+#presence_update_helper.start()
 client.run(CONFIG["TOKEN"])
