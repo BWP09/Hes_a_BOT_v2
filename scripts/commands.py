@@ -4,6 +4,10 @@ import colorama as col
 import utils
 
 
+# TODO MAKE LOGGING BETTER
+
+
+
 # A test command
 async def test(config: dict, message):
     await utils.send_r(message, message, f"Running v{ config['VERSION'] }")
@@ -11,7 +15,7 @@ async def test(config: dict, message):
 
 
 # Deletes a message by ID
-async def delete(config: dict, message, message_id: int):
+async def delete(config: dict, message: nextcord.Message, message_id: int):
     delete_message = await message.channel.fetch_message(message_id)
 
     await message.add_reaction(config["YES_EMOJI"])
@@ -19,6 +23,8 @@ async def delete(config: dict, message, message_id: int):
     await delete_message.delete()
     await asyncio.sleep(0.5)
     await message.delete()
+
+    print(f'{col.Fore.LIGHTRED_EX}[delete] {col.Style.RESET_ALL}deleted "{delete_message.content}"')
 
 
 # Deletes the last messages in a channel, amount is defined in the command
@@ -28,7 +34,7 @@ async def purge(config: dict, message, amount: int, case: int):
             raise Exception("too many purge messages")
 
         else:
-            print(f"{col.Fore.RED}[purge] {col.Style.RESET_ALL}purging {amount} messages")
+            print(f"{col.Fore.LIGHTRED_EX}[purge] {col.Style.RESET_ALL}purging {amount} messages")
 
             await message.add_reaction(config["YES_EMOJI"])
             await asyncio.sleep(1)
@@ -114,6 +120,8 @@ async def status(config: dict, client: nextcord.Client, message, args: str):
         await client.change_presence(activity = nextcord.Game(str(status_message)), status = nextcord.Status[status_type])
         await message.add_reaction(config["YES_EMOJI"])
 
+        print(f'{col.Fore.LIGHTRED_EX}[status] {col.Style.RESET_ALL}changed to "\033[4m{status_type}\033[0m" playing "\033[4m{status_message}\033[0m"')
+
     except Exception as e:
         await utils.send_r(message, message, utils.error_handler(config, str(e)))
         await message.add_reaction(config["NO_EMOJI"])
@@ -125,7 +133,6 @@ async def spam(config: dict, message, args: str):
         spam_message = ""
         amount = int(args.split("; ")[0])
         text = args.split("; ")[1]
-        print(f"{col.Fore.RED}[spam] {col.Style.RESET_ALL}spamming: {text}, {amount} times")
 
         if (len(text) + 1) * int(amount) >= 2000:
             raise Exception("too many spam messages")
@@ -133,6 +140,8 @@ async def spam(config: dict, message, args: str):
         for _ in range(int(amount)):
             spam_message += f"{text}\n"
 
+        print(f'{col.Fore.LIGHTRED_EX}[spam] {col.Style.RESET_ALL}spamming "\033[4m{text}\033[0m", {amount} times')
+        
         await utils.send(message, spam_message)
         await message.add_reaction(config["YES_EMOJI"])
 
@@ -151,11 +160,11 @@ async def megaspam(config: dict, message, args: str):
             raise Exception("too many megaspam messages")
 
         else:
-            print(f"{col.Fore.RED}[megaspam] {col.Style.RESET_ALL}spamming: {text}, {amount} times")
+            print(f'{col.Fore.LIGHTRED_EX}[megaspam] {col.Style.RESET_ALL}spamming: "\033[4m{text}\033[0m", {amount} times')
             await message.add_reaction(config["YES_EMOJI"])
 
             for i in range(amount):
-                print(f"{col.Fore.RED}[megaspam] {col.Style.RESET_ALL}on message: {i + 1} of {amount}")
+                print(f"{col.Fore.LIGHTRED_EX}[megaspam] {col.Style.RESET_ALL}on message: {i + 1} of {amount}")
                 await utils.send(message, text)
 
     except Exception as e:
@@ -164,7 +173,7 @@ async def megaspam(config: dict, message, args: str):
 
 
 # Change your roles (hehe)
-async def role(config: dict, client: nextcord.Client, message: nextcord.Message, args: str):
+async def role(config: dict, client: nextcord.Client, message, args: str):
     try:
         action = args.split("; ")[0]
         server_id = args.split("; ")[1]
@@ -177,9 +186,11 @@ async def role(config: dict, client: nextcord.Client, message: nextcord.Message,
 
         if action == "add":
             await user.add_roles(role) # type: ignore
+            print(f"{col.Fore.LIGHTRED_EX}[role] {col.Style.RESET_ALL}added \033[4m{role}\033[0m to \033[4m{user}\033[0m in \033[4m{server}\033[0m")
 
         elif action == "remove":
             await user.remove_roles(role) # type: ignore
+            print(f"{col.Fore.LIGHTRED_EX}[role] {col.Style.RESET_ALL}removed \033[4m{role}\033[0m from \033[4m{user}\033[0m in \033[4m{server}\033[0m")
         
         await message.add_reaction(config["YES_EMOJI"])
 
@@ -201,6 +212,8 @@ async def join(config: dict, message):
         await channel.connect()
         await utils.send(message, "sure")
 
+        print(f"{col.Fore.LIGHTRED_EX}[vc] {col.Style.RESET_ALL}joined \033[4m{channel.name}\033[0m in \033[4m{channel.guild}\033[0m")
+
     else: await utils.send(message, "I don't wanna vc by myself...")
 
 
@@ -209,6 +222,8 @@ async def leave(config: dict, message):
     if message.guild.voice_client:
         await message.guild.voice_client.disconnect()
         await utils.send(message, "ok")
+
+        print(f"{col.Fore.LIGHTRED_EX}[vc] {col.Style.RESET_ALL}left a vc in \033[4m{message.guild}\033[0m")
 
     else: await utils.send(message, "I'm not even in a vc")
 
@@ -229,6 +244,8 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
             if message.guild.voice_client:
                 vc = message.guild.voice_client
                 vc.play(nextcord.FFmpegPCMAudio(executable = config["FFMPEG_EXEC_PATH"], source = config["VC_FILES_PATH"] + name))
+
+                print(f'{col.Fore.LIGHTRED_EX}[vc] {col.Style.RESET_ALL}playing "\033[4m{name}\033[0m" in \033[4m{vc.channel}\033[0m in \033[4m{message.guild}\033[0m')
 
             else: raise Exception("Not connected to voice channel")
 
@@ -293,6 +310,8 @@ async def invite(config: dict, message):
     try:
         invite_link = await message.channel.create_invite()
 
+        print(f'{col.Fore.LIGHTRED_EX}[invite] {col.Style.RESET_ALL}\033[4m{message.author}\033[0m created an invite link: "\033[4m{invite_link}\033[0m"')
+
         await utils.send_r(message, message, invite_link)
         await message.add_reaction(config["YES_EMOJI"])
 
@@ -324,6 +343,8 @@ async def blacklist(config: dict, message, args: str):
                 utils.file_append(config["BLACKLIST_PATH"], f"{type}.txt", f"{id}\n")
                 await message.add_reaction(config["YES_EMOJI"])
 
+                print(f"{col.Fore.LIGHTRED_EX}[blacklist] {col.Style.RESET_ALL}blacklisted {type} \033[4m{id}\033[0m")
+
             else: raise Exception("ID already in blacklist")
 
         elif option == "remove":
@@ -335,6 +356,8 @@ async def blacklist(config: dict, message, args: str):
 
             utils.file_write(config["BLACKLIST_PATH"], f"{type}.txt", new_contents)
             await message.add_reaction(config["YES_EMOJI"])
+
+            print(f"{col.Fore.LIGHTRED_EX}[blacklist] {col.Style.RESET_ALL}un-blacklisted {type} \033[4m{id}\033[0m")
 
     except Exception as e:
         await utils.send_r(message, message, utils.error_handler(config, str(e)))
@@ -349,7 +372,7 @@ async def py(config: dict, message: nextcord.Message, args: str):
         del config["TOKEN"]
         del config["WEBHOOK_URL"]
     
-        scope = {"message": message, "config": config}
+        scope = {"message": message, "config": config, "utils": utils}
     
         exec(args, scope)
     
