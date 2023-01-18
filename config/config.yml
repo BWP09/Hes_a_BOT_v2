@@ -8,12 +8,12 @@ bot:
   megaspam_max: 20
   playing_status: Type "hesa help"
   purge_max: 10
-  version: R2.4.1 D1.8.23
+  version: R2.5.0 D1.18.23
 emoji:
   no_emoji: "\u274C"
   yes_emoji: "\u2705"
 files:
-  ffmpeg_exec_path: OUTDATED__C:/Program Files (extracted)/ffmpeg-n5.0-latest-win64-gpl-5.0/bin/ffmpeg.exe
+  ffmpeg_exec_path: C:/Program Files (extracted)/ffmpeg-2023-01-09-git-13d04e30d7-full_build/bin/ffmpeg.exe
   blacklist_path: C:/Users/BWP09/Desktop/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/blacklist/
   help_files_path: C:/Users/BWP09/Desktop/Code/Python/Discord/Bots/Hes_a_BOT_v2/config/help/
   images_path: C:/Users/BWP09/Desktop/Code/Python/Discord/Bots/Hes_a_BOT_v2/data/images/
