@@ -28,6 +28,7 @@ async def on_ready():
 @client.event
 async def on_presence_update(before: nextcord.Member, after: nextcord.Member):
     if after.guild.id != 974019677116309544: return
+    if after.name == "sslvie": return
     
     update_config()
 
@@ -73,9 +74,10 @@ async def on_message_edit(before, after):
     channel = str(before.channel)
     channel_id = int(before.channel.id)
     server = str(before.guild)
+    server_id = int(before.guild.id)
 
     if CONFIG["USE_WEBHOOK"]:
-        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+        if server_id == CONFIG["WEBHOOK_SERVER"]: return
 
         utils.webhook_log(CONFIG, f"*[MESSAGE EDIT]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__**\n**>OLD:** {before_message}\n**>NEW:** {after_message}\n")
 
@@ -93,9 +95,10 @@ async def on_message_delete(message):
     channel = str(message.channel)
     channel_id = int(message.channel.id)
     server = str(message.guild)
+    server_id = int(message.guild.id)
 
     if CONFIG["USE_WEBHOOK"]:
-        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+        if server_id == CONFIG["WEBHOOK_SERVER"]: return
 
         utils.webhook_log(CONFIG, f"*[MESSAGE DELETE]:* **[{utils.get_date_time(0)}]: [{server}: {channel}]: __{username}:__** {user_message}")
 
@@ -119,9 +122,10 @@ async def on_message(message):
     channel = str(message.channel)
     channel_id = int(message.channel.id)
     server = str(message.guild)
+    server_id = int(message.guild.id)
 
     if CONFIG["USE_WEBHOOK"]:
-        if channel_id == CONFIG["WEBHOOK_CHANNEL"]: return
+        if server_id == CONFIG["WEBHOOK_SERVER"]: return
 
     try: server_id = int(message.guild.id)
     except: server_id = 0
@@ -148,7 +152,7 @@ async def on_message(message):
 
         utils.log(CONFIG["LOGS_PATH"], f"LOG-{utils.get_date_time(1)}", f"[{utils.get_date_time(0)}]: [{server}: {channel}]: {username}: {user_message_default}")
         print(f"{col.Fore.LIGHTMAGENTA_EX}[{utils.get_date_time(0)}]: {col.Fore.GREEN}[{server}: {col.Fore.LIGHTGREEN_EX}{channel}{col.Fore.GREEN}]: {col.Fore.CYAN}{username}: {col.Fore.LIGHTBLUE_EX}{user_message_default}")
-        
+
 
     if author_id == CONFIG["BOT_ID"]: return
 
