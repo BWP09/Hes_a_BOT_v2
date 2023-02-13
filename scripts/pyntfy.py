@@ -49,6 +49,22 @@ def Icon(link: str):
 def Email(email: str):
     return {"e": email}
 
+def Action(action_type: str, label: str, url: str, clear: bool = True):
+    if clear:
+        return {"Actions": f"{action_type}, {label}, {url}, clear=true"}
+    else:
+        return {"Actions": f"{action_type}, {label}, {url}"}
+
+def Actions(*actions: dict):
+    actions_dict = {"Actions": ""}
+    for action in actions:
+        actions_dict["Actions"] += action["Actions"] + "; "
+    
+    actions_dict["Actions"] = actions_dict["Actions"].removesuffix("; ")
+
+    return actions_dict
+
+
 
 def ntfy(
         topic_url: str, content: str,
@@ -59,11 +75,20 @@ def ntfy(
         filename: dict = {},
         attachment: dict = {},
         icon: dict = {},
-        email: dict = {}
+        email: dict = {},
+        actions: dict = {},
+        debug: bool = False
         ):
+    
+    headers = {**headers, **title, **priority, **tags, **filename, **attachment, **icon, **email, **actions}
 
-    requests.post(
+    r = requests.post(
         topic_url,
         data = content,
-        headers = {**headers, **title, **priority, **tags, **filename, **attachment, **icon, **email}
+        headers = headers
     )
+
+    if debug:
+        print(f"response: {r}\n")
+        print(f"data: {content}\n")
+        print(f"headers: {headers}")
