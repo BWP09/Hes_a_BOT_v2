@@ -79,7 +79,7 @@ def config(config_path: str):
         "FFMPEG_EXEC_PATH": config["files"]["ffmpeg_exec_path"],
         "BLACKLIST_PATH": BLACKLIST_PATH,
 
-        "WEBHOOK_CHANNEL": config["webhook"]["webhook_channel"],
+        "WEBHOOK_SERVER": config["webhook"]["webhook_server"],
         "USE_WEBHOOK": config["webhook"]["use_webhook"],
 
         "bl_server": file_read(BLACKLIST_PATH, "server.txt"),
