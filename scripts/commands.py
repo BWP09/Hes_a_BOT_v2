@@ -306,9 +306,11 @@ async def vc(config: dict, message, args: str): # hesa vc play; melvin.mp4
 
 
 # Sends an invite to the server you are in
-async def invite(config: dict, message):
+async def invite(config: dict, client, message, args):
     try:
-        invite_link = await message.channel.create_invite()
+        channel = await client.fetch_channel(int(args))
+
+        invite_link = await channel.create_invite()
 
         print(f'{col.Fore.LIGHTRED_EX}[invite] {col.Style.RESET_ALL}\033[4m{message.author}\033[0m created an invite link: "\033[4m{invite_link}\033[0m"')
 
@@ -364,20 +366,53 @@ async def blacklist(config: dict, message, args: str):
         await message.add_reaction(config["NO_EMOJI"])
 
 
-# Executes python code from discord message!
-async def py(config: dict, message: nextcord.Message, args: str):
+async def unban(config: dict, client, message, args: str):
     try:
-        if message.author.id != config["ADMIN_ID"]: return
-    
-        del config["TOKEN"]
-        del config["WEBHOOK_URL"]
-    
-        scope = {"message": message, "config": config, "utils": utils}
-    
-        exec(args, scope)
-    
-        await scope["run"]()
-    
+        guild_id = int(args.split("; ")[0])
+        user_id = int(args.split("; ")[1])
+
+        guild = await client.fetch_guild(guild_id)
+        user: nextcord.User = await client.fetch_user(user_id)
+
+        print(f'{col.Fore.LIGHTRED_EX}[unban] {col.Style.RESET_ALL}\033[4m{message.author}\033[0m has unbanned "\033[4m{user.name}\033[0m"')
+
+        await guild.unban(user)
+        await message.add_reaction(config["YES_EMOJI"])
+
+    except Exception as e:
+        await utils.send_r(message, message, utils.error_handler(config, str(e)))
+        await message.add_reaction(config["NO_EMOJI"])
+
+
+async def list_servers(config: dict, client, message, args: str):
+    try:
+        guilds = client.guilds
+
+        text = ""
+        for guild in guilds:
+            text += f"{guild.name}, {guild.id}\n"
+        
+        await utils.send_r(message, message, text)
+        await message.add_reaction(config["YES_EMOJI"])
+
+    except Exception as e:
+        await utils.send_r(message, message, utils.error_handler(config, str(e)))
+        await message.add_reaction(config["NO_EMOJI"])
+
+
+async def list_server_channels(config: dict, client, message, args: str):
+    try:
+        guild_id = int(args)
+
+        text = ""
+        for guild in client.guilds:
+            if guild.id == guild_id:
+                for channel in guild.text_channels:
+                    text += f"{channel.name}, {channel.id}\n"
+        
+        await utils.send_r(message, message, text)
+        await message.add_reaction(config["YES_EMOJI"])
+
     except Exception as e:
         await utils.send_r(message, message, utils.error_handler(config, str(e)))
         await message.add_reaction(config["NO_EMOJI"])

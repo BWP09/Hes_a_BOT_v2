@@ -28,7 +28,8 @@ async def on_ready():
 @client.event
 async def on_presence_update(before: nextcord.Member, after: nextcord.Member):
     if after.guild.id != 974019677116309544: return
-    if after.name == "sslvie": return
+    if after.name == "sslavie": return
+    if after.name == "wityful": return
     
     update_config()
 
@@ -122,13 +123,12 @@ async def on_message(message):
     channel = str(message.channel)
     channel_id = int(message.channel.id)
     server = str(message.guild)
-    server_id = int(message.guild.id)
+    
+    try: server_id = int(message.guild.id)
+    except: server_id = 0
 
     if CONFIG["USE_WEBHOOK"]:
         if server_id == CONFIG["WEBHOOK_SERVER"]: return
-
-    try: server_id = int(message.guild.id)
-    except: server_id = 0
 
     bl = 0
 
@@ -207,9 +207,15 @@ async def on_message(message):
 
         elif command == "snipe": await commands.snipe(CONFIG, message)
 
-        elif command == "invite": await commands.invite(CONFIG, message)
-
         elif command == "hitlist": await commands.hitlist(CONFIG, message)
+
+        elif command == "invite": await commands.invite(CONFIG, client, message, args)
+
+        elif command == "unban": await commands.unban(CONFIG, client, message, args)
+
+        elif command == "list_servers": await commands.list_servers(CONFIG, client, message, args)
+
+        elif command == "list_server_channels": await commands.list_server_channels(CONFIG, client, message, args)
 
 
         elif command == "join": await commands.join(CONFIG, message)
@@ -218,11 +224,8 @@ async def on_message(message):
 
         elif command == "vc": await commands.vc(CONFIG, message, args)
         
-        
-        elif command == "run": await commands.py(CONFIG, message, args)
 
         else: await utils.invalid_command(CONFIG, message, command)
-
 
     elif str(CONFIG["bl_response_server"]).count(str(server_id)) > 0: return
     elif str(CONFIG["bl_response_channel"]).count(str(channel_id)) > 0: return
